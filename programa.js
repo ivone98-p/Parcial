@@ -4,21 +4,6 @@ L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 }).addTo(map);
 
-// async function cargarGeoJSON() {
-//     try {
-//         let response = await fetch('barrios-bogota'); // Verifica que esta URL sea válida
-//         if (!response.ok) {
-//             throw new Error(`Error HTTP: ${response.status}`);
-//         }
-//         let data = await response.json(); // Esperar el JSON correctamente
-//         L.geoJSON(data).addTo(map); // Agregar los datos al mapa
-//     } catch (error) {
-//         console.error("Error al cargar el GeoJSON:", error);
-//     }
-// }
-
-// cargarGeoJSON();
-
 
 async function loadPolygon(){
     let myData = await fetch('barrios-bogota.geojson'); //Aquí se especifica .geojson, lo que indica claramente el tipo de archivo que se está solicitando. 
@@ -35,25 +20,100 @@ async function loadPolygon(){
 
 loadPolygon();
 //CARGAR LOS ARBOLES
-async function loadPolygon2() {
-    let myData2 = await fetch('arboles_laEstrada.geojson');  
-    let myPoint = await myData2.json();
 
-    L.geoJSON(myPoint, {
-        pointToLayer: function(feature, latlng) {
-            return L.circleMarker(latlng, {
-                radius: 5,  // Tamaño del punto
-                color: 'green',  // Borde del punto
-                fillColor: 'green',  // Color del relleno
-                fillOpacity: 0.8  // Opacidad del punto
-            });
+let btnTrees = document.getElementById('btnTrees');
+btnTrees.addEventListener('click', 
+    async function() {
+        let response = await fetch('arboles_laEstrada.geojson');
+        let data = await response.json();
+
+        L.geoJSON(data, {
+            pointToLayer: function(feature, latlng) {
+                return L.circleMarker(latlng, {
+                    radius: 5, 
+                    fillColor: 'green',
+                    weight: 1,
+                    opacity: 1,
+                    fillOpacity: 0.8 
+                });
+            }
+        }).addTo(map);
+    }
+); 
+
+
+//CARGAR LOS distancias, voy a crear un arreglo de arboles y voy a recorrerlo
+let btnDistance= document.getElementById("btnDistance");
+btnDistance.addEventListener('click',
+    async ()=>{
+        let response= await fetch("arboles_laEstrada.geojson");
+        let datos= await response.json();
+        let trees= datos.features.map((myElement, index)=>({
+            id: index+1,
+            coordinates: myElement.geometry.coordinates
+        }));        
+
+        let distances=[];
+        trees.forEach( (treeA)=>{trees.forEach(
+
+            
+                (treeB)=>{
+                    if(treeA.id != treeB.id){
+                        let distance = turf.distance( 
+                            turf.point(treeA.coordinates),
+                            turf.point(treeB.coordinates),
+                        );
+                        distances.push(
+                            [
+                                `Árbol ${treeA.id}`,
+                                `Árbol ${treeB.id}`,
+                                distance.toFixed(3)                            
+                            ]
+                        )
+                }
+            }
+            )
         }
-    }).addTo(map);
+        )
+        generatePDF(distances, trees.lenght);
+    }
+)
+
+//como me devuelvo un objeto con muchas cosas, le espesifico a jspdf que solo necesito un jsPDF
+function generatePDF(distances, totalTrees){
+    let { jsPDF } = window.jspdf;
+    let documentPDF= new jsPDF();   
+    
+    documentPDF.text("REPORTE DE ÁRBOLES EN EL BARRIO LA ESTRADA", 10,10);
+
+    documentPDF.autoTable(
+        {
+            head: [['Árbol 1', 'Árbol 2', 'Distance']],
+            body: distances
+        }
+    );
+    documentPDF.save("Estrada.pdf")
 }
 
-loadPolygon2();
 
 
+//CARGAR LOS siniestros
+let btnSiniestros = document.getElementById('btnSiniestros');
+btnSiniestros.addEventListener('click', 
+    async function() {
+        let response = await fetch('siniestros_laEstrada.geojson');
+        let data = await response.json();
 
-let btnTrees = document.getElementById("btnTrees");
-btnTrees.addEventListener('click', ()=> alert('Hola'));
+        L.geoJSON(data, {
+            pointToLayer: function(feature, latlng) {
+                return L.circleMarker(latlng, {
+                    radius: 5, 
+                    fillColor: 'black',
+                    weight: 1,
+                    opacity: 1,
+                    fillOpacity: 0.8 
+                });
+            }
+        }).addTo(map);
+    }
+); 
