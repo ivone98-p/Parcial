@@ -16,6 +16,8 @@
     <script src="https://cdn.jsdelivr.net/npm/@turf/turf@7/turf.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://unpkg.com/@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css"/>
 
  
    
@@ -23,16 +25,49 @@
 </head>
 <body>
 
-    <div id="map"></div>
-    <div id="buttonContainer">
-        <button class="buttons" id="btnTrees">Árboles</button>
-        <button class="buttons" id="btnDistance">Distancias</button>
-        <button class="buttons" id="btnSiniestros">Siniestros</button>
+    <section id="section-header">
+        <div class="image-container">
+            <img src="imagen-local.png" alt="Foto del barrio La Estrada">
+            <div class="overlay-text">
+                <h1>La Estrada</h1>
+                <h2>Localidad de Engativá</h2>
+            </div>
+        </div>
+        <p class="citation">
+            Imagen tomada de: 
+            <a href="https://conexion.uexternado.edu.co/el-alma-del-comercio-tres-vidas-en-la-estrada/" target="_blank">
+                Conexión Externado
+            </a>
+        </p>
+    </section>
+
+    <div class="map-sections">
+        <section class="map-container">
+            <h2>Polígono del barrio La Estrada</h2>
+            <div id="map1"></div> <!-- Primer mapa -->
+        </section>
+        <section class="map-container">
+            <h2>Mapa Interactivo</h2>
+            <div id="map2"></div> <!-- Segundo mapa -->
+        </section>
+    </div>
+   
+
+<section class="section-map">
+    <h2 class="map-subtitle">Polígono del barrio La Estrada</h2>
+    <div id="map">
+        <!-- Contenedor de botones dentro del mapa -->
+        <div id="buttonContainer">
+            <button class="buttons" id="btnTrees">Árboles</button>
+            <button class="buttons" id="btnDistance">Distancias</button>
+            <button class="buttons" id="btnSiniestros">Siniestros</button>
+        </div>
+    </div>
+</section>
+
 
     </div>
 </body>
-    
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="programa.js"></script>
-    
-
 </html>

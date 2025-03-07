@@ -5,6 +5,8 @@ L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 }).addTo(map);
 
 
+
+
 async function loadPolygon(){
     let myData = await fetch('barrios-bogota.geojson'); //Aquí se especifica .geojson, lo que indica claramente el tipo de archivo que se está solicitando. 
     let myPolygon = await myData.json();
